@@ -22,6 +22,10 @@ import contactRoutes from './routes/contactRoutes.js';
 const app = express();
 const isProd = process.env['NODE_ENV'] === 'production';
 
+// Trust the first proxy (Render's load balancer) so express-rate-limit
+// can read the real client IP from X-Forwarded-For
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' },
