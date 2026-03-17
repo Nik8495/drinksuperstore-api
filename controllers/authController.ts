@@ -573,6 +573,38 @@ export const updatePassword = async (req: Request, res: Response) => {
   }
 };
 
+export const refreshSession = async (req: Request, res: Response) => {
+  const { refresh_token } = req.body || {};
+
+  if (!refresh_token) {
+    return res.status(400).json({ message: 'refresh_token is required.' });
+  }
+
+  try {
+    const { data, error } = await supabaseAnon.auth.refreshSession({
+      refresh_token,
+    });
+
+    if (error || !data?.session) {
+      return res.status(401).json({
+        message: 'Failed to refresh session',
+        error: error?.message,
+      });
+    }
+
+    return res.status(200).json({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+      expires_in: data.session.expires_in,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      message: 'Failed to refresh session',
+      error: error?.message || 'Unknown error',
+    });
+  }
+};
+
 export const exchangeAuthCodeForSession = async (req: Request, res: Response) => {
   const { code }: ExchangeCodeBody = req.body || {};
 

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { supabase } from '../utils/SupabaseClient.js';
+import { safeError } from '../utils/errorHandler.js';
 
 const buildCartPayload = (body: any) => {
   const payload: Record<string, any> = {};
@@ -36,7 +37,7 @@ export const updateCart = async (req: Request, res: Response) => {
     if (error) throw error;
     res.status(200).json({ message: 'Cart updated successfully', data });
   } catch (error: any) {
-    res.status(500).json({ message: 'Error updating cart', error: error.message });
+    res.status(500).json({ message: 'Error updating cart', error: safeError(error) });
   }
 };
 
@@ -54,7 +55,7 @@ export const getCart = async (req: Request, res: Response) => {
 
     res.status(200).json(data || { items: [] });
   } catch (error: any) {
-    res.status(500).json({ message: 'Error fetching cart', error: error.message });
+    res.status(500).json({ message: 'Error fetching cart', error: safeError(error) });
   }
 };
 
@@ -78,7 +79,7 @@ export const createCart = async (req: Request, res: Response) => {
     if (error) throw error;
     res.status(201).json({ message: 'Cart created', data });
   } catch (error: any) {
-    res.status(500).json({ message: 'Error creating cart', error: error.message });
+    res.status(500).json({ message: 'Error creating cart', error: safeError(error) });
   }
 };
 
@@ -100,6 +101,6 @@ export const deleteCart = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: 'Cart deleted', data });
   } catch (error: any) {
-    res.status(500).json({ message: 'Error deleting cart', error: error.message });
+    res.status(500).json({ message: 'Error deleting cart', error: safeError(error) });
   }
 };

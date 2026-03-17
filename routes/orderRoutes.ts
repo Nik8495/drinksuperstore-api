@@ -6,15 +6,16 @@ import {
   updateOrder,
 } from '../controllers/orderController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import { requireOwnership } from '../middleware/ownershipMiddleware.js';
 
 const router = Router();
 
-// Endpoint: POST /api/orders (Create new)
+// Guest checkout (no auth required)
 router.post('/guest', createOrder);
-router.post('/', protect, createOrder);
 
-// Endpoint: GET /api/orders/:userId (Fetch history)
-router.get('/:userId', protect, getUserOrders);
+// Authenticated routes with ownership validation
+router.post('/', protect, requireOwnership, createOrder);
+router.get('/:userId', protect, requireOwnership, getUserOrders);
 router.put('/:id', protect, updateOrder);
 router.delete('/:id', protect, deleteOrder);
 

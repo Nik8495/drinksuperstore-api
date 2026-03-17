@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import crypto from 'crypto';
 import { supabase } from '../utils/SupabaseClient.js';
+import { safeError } from '../utils/errorHandler.js';
 
 const buildAddressPayload = (body: any) => {
   const payload: Record<string, any> = {};
@@ -134,7 +135,7 @@ export const getAddressesByUserId = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       message: 'Error fetching addresses',
-      error: error.message,
+      error: safeError(error),
     });
   }
 };
@@ -168,7 +169,7 @@ export const createAddress = async (req: Request, res: Response) => {
     if (existingError) {
       return res.status(500).json({
         message: 'Failed to validate address',
-        error: existingError.message,
+        error: safeError(existingError),
       });
     }
 

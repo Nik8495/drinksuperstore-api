@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { protect } from '../middleware/authMiddleware.js';
+import { requireOwnership } from '../middleware/ownershipMiddleware.js';
 import {
   createAddress,
   deleteAddress,
@@ -9,10 +10,12 @@ import {
 
 const router = Router();
 
-// Endpoint: POST /api/addresses
+// Guest checkout address (no auth)
 router.post('/guest', createAddress);
-router.post('/', protect, createAddress);
-router.get('/', protect, getAddressesByUserId);
+
+// Authenticated routes with ownership validation
+router.post('/', protect, requireOwnership, createAddress);
+router.get('/', protect, requireOwnership, getAddressesByUserId);
 router.put('/:id', protect, updateAddress);
 router.delete('/:id', protect, deleteAddress);
 

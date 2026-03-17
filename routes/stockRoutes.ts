@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import { reserveStock, releaseStock } from '../controllers/stockController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = Router();
 
-router.post('/reserve', reserveStock);
-router.post('/release', releaseStock);
+// Stock endpoints require authentication
+router.post('/reserve', protect, reserveStock);
+router.post('/release', protect, releaseStock);
 
 export default router;

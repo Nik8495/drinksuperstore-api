@@ -48,6 +48,8 @@ const buildProductPayload = (body: any) => {
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
     const rawSearch = (req.query.search ?? req.query.q ?? '').toString().trim();
+    const brandFilter = (req.query.brandId ?? req.query.brand ?? '').toString().trim();
+    const categoryFilter = (req.query.categoryId ?? req.query.category ?? '').toString().trim();
     const page = Math.max(parseInt((req.query.page ?? '1') as string, 10) || 1, 1);
     const limit = Math.max(parseInt((req.query.limit ?? '12') as string, 10) || 12, 1);
     const shouldPaginate =
@@ -107,6 +109,14 @@ export const getAllProducts = async (req: Request, res: Response) => {
         filters.push(`quantity_available.eq.${numeric}`);
       }
       query = query.or(filters.join(','));
+    }
+
+    // Apply direct brand/category filters (from query params)
+    if (brandFilter) {
+      query = query.eq('brand_id', brandFilter);
+    }
+    if (categoryFilter) {
+      query = query.eq('category_id', categoryFilter);
     }
 
     if (shouldPaginate) {

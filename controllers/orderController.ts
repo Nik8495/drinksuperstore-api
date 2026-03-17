@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { supabase } from '../utils/SupabaseClient.js';
+import { safeError } from '../utils/errorHandler.js';
 
 const buildOrderPayload = (body: any) => {
   const payload: Record<string, any> = {};
@@ -131,7 +132,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     res.status(201).json(data);
   } catch (error: any) {
-    res.status(500).json({ message: 'Order failed', error: error.message });
+    res.status(500).json({ message: 'Order failed', error: safeError(error) });
   }
 };
 
@@ -147,7 +148,7 @@ export const getUserOrders = async (req: Request, res: Response) => {
     if (error) throw error;
     res.status(200).json(data);
   } catch (error: any) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: safeError(error) });
   }
 };
 
@@ -166,7 +167,7 @@ export const updateOrder = async (req: Request, res: Response) => {
 
     res.status(200).json(data);
   } catch (error: any) {
-    res.status(500).json({ message: 'Error updating order', error: error.message });
+    res.status(500).json({ message: 'Error updating order', error: safeError(error) });
   }
 };
 
@@ -188,6 +189,6 @@ export const deleteOrder = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: 'Order deleted', data });
   } catch (error: any) {
-    res.status(500).json({ message: 'Error deleting order', error: error.message });
+    res.status(500).json({ message: 'Error deleting order', error: safeError(error) });
   }
 };

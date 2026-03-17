@@ -6,6 +6,7 @@ import {
   signUp,
   createGuestUser,
   exchangeAuthCodeForSession,
+  refreshSession,
   updateUserDetails,
   updatePassword,
 } from '../controllers/authController.js';
@@ -26,6 +27,7 @@ router.get('/user/:id', protect, getUserById);
 router.put('/user/:id', protect, updateUserDetails);
 router.post('/password-reset', requestPasswordReset);
 router.post('/exchange-code', exchangeAuthCodeForSession);
+router.post('/refresh', refreshSession);
 router.post('/password-update', protect, updatePassword);
 
 export default router;
