@@ -22,10 +22,16 @@ const buildProductPayload = (body: any) => {
   assign('id', body.id);
   assign('name', body.name);
   assign('description', body.description);
-  // Brand is optional: treat an empty/blank selection as no brand (null)
-  // so it never reaches the DB as an empty string (invalid for a uuid column).
-  const brandIdValue = body.brandId ?? body.brand_id;
-  assign('brand_id', brandIdValue === '' ? null : brandIdValue);
+  // Brand is optional. Distinguish "field not sent" from "explicitly cleared":
+  //  - field absent       -> leave brand_id untouched
+  //  - null / '' / blank  -> clear the brand (store null)
+  // Note: `??` can't be used here because it would collapse an explicit null
+  // (the "None" selection) into a skip, leaving the old brand in place.
+  if (body.brandId !== undefined || body.brand_id !== undefined) {
+    const rawBrandId = body.brandId !== undefined ? body.brandId : body.brand_id;
+    payload.brand_id =
+      rawBrandId === null || rawBrandId === '' ? null : rawBrandId;
+  }
   assign('category_id', body.categoryId ?? body.category_id);
   assign('sub_category_id', body.subCategoryId ?? body.sub_category_id);
   assign('country_of_origin', body.countryOfOrigin ?? body.country_of_origin);
