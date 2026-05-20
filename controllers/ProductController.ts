@@ -22,7 +22,10 @@ const buildProductPayload = (body: any) => {
   assign('id', body.id);
   assign('name', body.name);
   assign('description', body.description);
-  assign('brand_id', body.brandId ?? body.brand_id);
+  // Brand is optional: treat an empty/blank selection as no brand (null)
+  // so it never reaches the DB as an empty string (invalid for a uuid column).
+  const brandIdValue = body.brandId ?? body.brand_id;
+  assign('brand_id', brandIdValue === '' ? null : brandIdValue);
   assign('category_id', body.categoryId ?? body.category_id);
   assign('sub_category_id', body.subCategoryId ?? body.sub_category_id);
   assign('country_of_origin', body.countryOfOrigin ?? body.country_of_origin);
